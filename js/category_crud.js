@@ -67,7 +67,7 @@ function verModificarCategoria(id) {
 
                   
                     <button type="button" class="btn btn-outline-warning" 
-                        onclick="modificarUsuario('${categoria.category_id}')">Modificar
+                        onclick="modificarCategoria('${categoria.category_id}')">Modificar
                     </button>
                 </form>`;
       }
@@ -79,7 +79,7 @@ function verModificarCategoria(id) {
     });
 }
 
-async function modificarUsuario(id) {
+async function modificarCategoria(id) {
   validaToken();
   let myForm = document.getElementById('modificar');
   let formData = new FormData(myForm);
@@ -94,7 +94,7 @@ async function modificarUsuario(id) {
     body: JSON.stringify(jsonData),
   });
   if (request.ok) {
-    alertas('Se modifico la categoria de forma exitosa!', 1);
+    alertas('Category created', 1);
     listar();
   } else {
     const data = await request.json(); // Espera a que la promesa se resuelva
