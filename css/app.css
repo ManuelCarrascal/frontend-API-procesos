@@ -1,0 +1,28 @@
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* vh stands for viewport height */
+}
+
+.contenedor-alertas {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.card {
+  width: 100%;
+  max-width: 800px;
+}
+
+.icon-dashboard {
+  width: 1rem;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
