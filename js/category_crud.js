@@ -199,7 +199,7 @@ function createCategoryForm() {
   myModal.toggle();
 }
 
-function eliminaUsuario(id) {
+function eliminaCategoria(id) {
   validaToken();
   let settings = {
     method: 'DELETE',
