@@ -26,9 +26,9 @@ function listar() {
                     <td class="text-center">${categoria.displayOrder}</td>
                     <td>
                     <a href="#" onclick="verModificarCategoria('${categoria.category_id}')" class="btn btn-outline-warning">
-                        <i class="fa-solid fa-user-pen"></i>
+                    <i class="fa-solid fa-pen-to-square"></i>
                     </a>
-                    <a href="#" onclick="verUsuario('${categoria.category_id}')" class="btn btn-outline-info">
+                    <a href="#" onclick="verCategoria('${categoria.category_id}')" class="btn btn-outline-info">
                         <i class="fa-solid fa-eye"></i>
                     </a>
                     </td>
@@ -51,7 +51,7 @@ function verModificarCategoria(id) {
       if (categoria) {
         cadena = `
                 <div class="p-3 mb-2 bg-light text-dark">
-                    <h1 class="display-5"><i class="fa-solid fa-user-pen"></i> Modificar Categoría</h1>
+                    <h1 class="display-5"> Modificar Categoría</h1>
                 </div>
               
                 <form action="" method="post" id="modificar">
@@ -73,7 +73,7 @@ function verModificarCategoria(id) {
       }
       document.getElementById('contentModal').innerHTML = cadena;
       let myModal = new bootstrap.Modal(
-        document.getElementById('modalUsuario')
+        document.getElementById('modalCategoria')
       );
       myModal.toggle();
     });
@@ -109,12 +109,12 @@ async function modificarCategoria(id) {
     alertas('Error: <br>' + dataResponse, 2);
   }
   document.getElementById('contentModal').innerHTML = '';
-  let myModalEl = document.getElementById('modalUsuario');
+  let myModalEl = document.getElementById('modalCategoria');
   let modal = bootstrap.Modal.getInstance(myModalEl); // Returns a Bootstrap modal instance
   modal.hide();
 }
 
-function verUsuario(id) {
+function verCategoria(id) {
   validaToken();
   let settings = {
     method: 'GET',
@@ -127,7 +127,7 @@ function verUsuario(id) {
       if (categoria) {
         cadena = `
                 <div class="p-3 mb-2 bg-light text-dark">
-                    <h1 class="display-5"><i class="fa-solid fa-user-pen"></i> Visualizar Categoría</h1>
+                    <h1 class="display-5"> Visualizar Categoría</h1>
                 </div>
                 <ul class="list-group">
                     <li class="list-group-item">Categoría: ${categoria.nameCategory}</li>
@@ -139,7 +139,7 @@ function verUsuario(id) {
       }
       document.getElementById('contentModal').innerHTML = cadena;
       let myModal = new bootstrap.Modal(
-        document.getElementById('modalUsuario')
+        document.getElementById('modalCategoria')
       );
       myModal.toggle();
     });
@@ -174,7 +174,7 @@ async function createCategory() {
     alertas('Error: <br>' + dataResponse, 2);
   }
   document.getElementById('contentModal').innerHTML = '';
-  let myModalEl = document.getElementById('modalUsuario');
+  let myModalEl = document.getElementById('modalCategoria');
   let modal = bootstrap.Modal.getInstance(myModalEl); // Returns a Bootstrap modal instance
   modal.hide();
 }
@@ -195,17 +195,17 @@ function createCategoryForm() {
                 <button type="button" class="btn btn-outline-info" onclick="createCategory()">Registrar</button>
             </form>`;
   document.getElementById('contentModal').innerHTML = cadena;
-  let myModal = new bootstrap.Modal(document.getElementById('modalUsuario'));
+  let myModal = new bootstrap.Modal(document.getElementById('modalCategoria'));
   myModal.toggle();
 }
 
-function eliminaUsuario(id) {
+function eliminaCategoria(id) {
   validaToken();
   let settings = {
     method: 'DELETE',
-    headers: headersUser,
+    headers: headersCategory,
   };
-  fetch(urlApiUser + '/' + id, settings)
+  fetch(urlApiCategory + '/' + id, settings)
     .then((response) => response.json())
     .then(function (data) {
       listar();
