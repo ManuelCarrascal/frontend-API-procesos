@@ -133,7 +133,7 @@
       </div>
     </nav>
     <div class="container-fluid">
-      <div class="card">
+      <div class="card mw-control">
         <div class="card-header">
           <h1>Categorias</h1>
         </div>
@@ -186,18 +186,12 @@
         </div>
       </div>
     </div>
-    <!-- Modal confirmacion eliminar-->
-    <div
-      class="modal fade"
-      id="modalConfirmacion"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
+    <!--Modal eliminar-->
+    <div class="modal" tabindex="-1" id="deleteModal">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Do you want to delete the record?</h5>
+            <h5 class="modal-title">Confirmar eliminación</h5>
             <button
               type="button"
               class="btn-close"
@@ -205,7 +199,9 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body" id="contenidoConfirmacion"></div>
+          <div class="modal-body">
+            <p>¿Estás seguro de que quieres eliminar esta categoría?</p>
+          </div>
           <div class="modal-footer">
             <button
               type="button"
@@ -214,7 +210,7 @@
             >
               No
             </button>
-            <button type="button" class="btn btn-primary" id="confirmar">
+            <button type="button" class="btn btn-primary" id="confirmDelete">
               Sí
             </button>
           </div>

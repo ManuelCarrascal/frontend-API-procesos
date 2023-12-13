@@ -13,16 +13,21 @@ function listar() {
     headers: headersCategory,
   };
   fetch(urlApiCategory, settings)
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
     .then(function (categories) {
       let categorias = '';
       for (const categoria of categories) {
         categorias += `
                 <tr>
                     <th scope="row">${categoria.category_id}</th>
-                    <td>${categoria.nameCategory}</td>
-                    <td>${categoria.description}</td>
-                    <td>${categoria.status}</td>
+                    <td class="text-center">${categoria.nameCategory}</td>
+                    <td class="text-center">${categoria.description}</td>
+                    <td class="text-center">${categoria.status}</td>
                     <td class="text-center">${categoria.displayOrder}</td>
                     <td>
                     <a href="#" onclick="verModificarCategoria('${categoria.category_id}')" class="btn btn-outline-warning">
@@ -31,10 +36,27 @@ function listar() {
                     <a href="#" onclick="verCategoria('${categoria.category_id}')" class="btn btn-outline-info">
                         <i class="fa-solid fa-eye"></i>
                     </a>
+                    <a href="#" onclick="eliminaCategoria('${categoria.category_id}')" class="btn btn-outline-danger">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
                     </td>
                 </tr>`;
       }
       document.getElementById('listar').innerHTML = categorias;
+    })
+    .catch((error) => {
+      if (error.message === 'Network response was not ok') {
+        let listarElement = document.getElementById('listar');
+        listarElement.innerHTML =
+          '<p id="vacio">No hay categorías registradas</p>';
+        let vacioElement = document.querySelector('#vacio');
+        vacioElement.classList.add('w-100', 'fs-4', 'mt-5');
+      } else {
+        console.error(
+          'There has been a problem with your fetch operation: ',
+          error
+        );
+      }
     });
 }
 
@@ -134,7 +156,7 @@ function verCategoria(id) {
                     <li class="list-group-item">Descripción: ${categoria.description}</li>
                     <li class="list-group-item">Estado: ${categoria.status}</li>
                     <li class="list-group-item">Display: ${categoria.displayOrder}</li>
-                    
+    
                 </ul>`;
       }
       document.getElementById('contentModal').innerHTML = cadena;
@@ -180,8 +202,7 @@ async function createCategory() {
 }
 
 function createCategoryForm() {
-  cadena = `
-                       
+  cadena = `       
             <form action="" method="post" id="registerForm">
                 <input type="hidden" name="id" id="id">
                 <label for="nameCategory" class="form-label">Nombre categoria</label>
@@ -199,16 +220,32 @@ function createCategoryForm() {
   myModal.toggle();
 }
 
+let idToDelete = null;
+let deleteModal = null;
+
 function eliminaCategoria(id) {
-  validaToken();
-  let settings = {
-    method: 'DELETE',
-    headers: headersCategory,
-  };
-  fetch(urlApiCategory + '/' + id, settings)
-    .then((response) => response.json())
-    .then(function (data) {
-      listar();
-      alertas('The category has been deleted successfully!', 2);
-    });
+  idToDelete = id;
+  deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+  deleteModal.show();
 }
+
+document.getElementById('confirmDelete').addEventListener('click', function () {
+  if (idToDelete) {
+    validaToken();
+    let settings = {
+      method: 'DELETE',
+      headers: headersCategory,
+    };
+    fetch(urlApiCategory + '/' + idToDelete, settings)
+      .then((response) => {
+        if (response.status === 204) return {};
+        else return response.json();
+      })
+      .then(function (data) {
+        listar();
+        alertas('The category has been deleted successfully!', 1);
+      });
+    idToDelete = null;
+    deleteModal.hide();
+  }
+});

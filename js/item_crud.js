@@ -14,8 +14,23 @@ function listar() {
     headers: headersItem,
   };
   fetch(urlApiItem, settings)
-    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        // No lanzar el error, solo devolver un array vacío
+        return [];
+      }
+      return response.json();
+    })
     .then(function (items) {
+      if (items.length === 0) {
+        let listarElement = document.getElementById('listar');
+        listarElement.innerHTML =
+          '<p id="vacio">No hay productos registrados</p>';
+        let vacioElement = document.querySelector('#vacio');
+        vacioElement.classList.add('w-100', 'fs-4', 'mt-5');
+        return;
+      }
+
       let productos = '';
       for (const producto of items) {
         productos += `
@@ -33,6 +48,9 @@ function listar() {
                     <i class="fa-solid fa-pen-to-square"></i>                    </a>
                     <a href="#" onclick="verProducto('${producto.id}')" class="btn btn-outline-info">
                         <i class="fa-solid fa-eye"></i>
+                    </a>
+                    <a href="#" onclick="eliminaProducto('${producto.id}')" class="btn btn-outline-danger">
+                    <i class="fa-solid fa-trash"></i>
                     </a>
                     </td>
                 </tr>`;
@@ -124,7 +142,7 @@ async function modificarProducto(id) {
     body: JSON.stringify(jsonData),
   });
   if (request.ok) {
-    alertas('Item created', 1);
+    alertas('Item Modificated', 1);
     listar();
   } else {
     const data = await request.json(); // Espera a que la promesa se resuelva
@@ -216,7 +234,22 @@ async function createItem() {
 }
 
 async function createItemForm() {
-  const categorias = await obtenerCategorias();
+  let categorias = await obtenerCategorias();
+  if (!Array.isArray(categorias)) {
+    let listarElement = document.getElementById('listar');
+    listarElement.innerHTML =
+      '<p id="vacio">Recuerda primero crear categorias</p>';
+    let vacioElement = document.querySelector('#vacio');
+    vacioElement.classList.add('w-100', 'fs-4', 'mt-5', 'text-red');
+    setTimeout(() => {
+      listarElement.innerHTML =
+        '<p id="vacio">No hay productos registrados</p>';
+      let vacioElement = document.querySelector('#vacio');
+      vacioElement.classList.add('w-100', 'fs-4', 'mt-5');
+    }, 3000);
+
+    return;
+  }
   let opcionesCategorias = '';
   for (const categoria of categorias) {
     opcionesCategorias += `<option value="${categoria.category_id}">${categoria.nameCategory}</option>`;
@@ -249,16 +282,32 @@ async function createItemForm() {
   myModal.toggle();
 }
 
+let idToDelete = null;
+let deleteModal = null;
+
 function eliminaProducto(id) {
-  validaToken();
-  let settings = {
-    method: 'DELETE',
-    headers: headersItem,
-  };
-  fetch(urlApiItem + '/' + id, settings)
-    .then((response) => response.json())
-    .then(function (data) {
-      listar();
-      alertas('The item has been deleted successfully!', 2);
-    });
+  idToDelete = id;
+  deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+  deleteModal.show();
 }
+
+document.getElementById('confirmDelete').addEventListener('click', function () {
+  if (idToDelete) {
+    validaToken();
+    let settings = {
+      method: 'DELETE',
+      headers: headersItem,
+    };
+    fetch(urlApiItem + '/' + idToDelete, settings)
+      .then((response) => {
+        if (response.status === 204) return {};
+        else return response.json();
+      })
+      .then(function (data) {
+        listar();
+        alertas('The item has been deleted successfully!', 1);
+      });
+    idToDelete = null;
+    deleteModal.hide();
+  }
+});
